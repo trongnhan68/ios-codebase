@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import RxSwiftExt
 
-@testable import NoName
+@testable import CodeBase
 
 class MainViewModelTests: XCTestCase {
 
@@ -27,17 +27,20 @@ class MainViewModelTests: XCTestCase {
         let viewModel = MainViewModel(input: MainViewModelContract.Input(),
                                       output: MainViewModelContract.Output(),
                                       dependency: MainViewModelContract.Dependency(youtubeSearchNetwork: YoutTubeSearchNetwork(), rocketListNetwork: RocketListNetwork()))
-        
+        viewModel.viewDidBind()
+
         let expect = expectation(description: "Did call play media")
+        
         viewModel.output.openRocket
             .subscribe( onNext: { value in
                 XCTAssertTrue(!(value.isEmpty))
                 expect.fulfill()
             })
             .disposed(by: disposeBag)
+
+        viewModel.input.didTapMedia.accept(MainViewContract.MediaDisplayItem(id: "1000", title: "", subtitle: "", time: "", url: "", thumbURL: ""))
         
         wait(for: [expect], timeout: 0.1)
-        viewModel.input.didTapMedia.accept(MainViewContract.MediaDisplayItem())
     }
 
     func testPerformanceExample() throws {
